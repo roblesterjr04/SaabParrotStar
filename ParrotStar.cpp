@@ -40,7 +40,6 @@ int presstimeout = 3; //Set the firsttime value after this long of a press.
 void setup() {
   Serial.begin(9600);
   Serial.println("Ready.");
-  Serial.println(analogRead(1));
   pinMode(13, OUTPUT);
 }
 
