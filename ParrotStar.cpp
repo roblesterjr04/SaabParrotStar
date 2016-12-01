@@ -1,3 +1,11 @@
+//#########################################################
+//###                                                   ###
+//###            Saab ParrotStar BT Control             ###
+//###                   Version 1.0                     ###
+//###                    Rob Lester                     ###
+//###                                                   ###
+//#########################################################
+
 int buttonPin = 0; //Analog Pin for Control Buttons.
 
 long millis_held;
@@ -6,18 +14,23 @@ int previous = 0;
 int current = 0;
 int executed = 0;
 
+// Button 1 analog range
 int btn1low = 200;
 int btn1high = 300;
 
+// Button 2 analog range
 int btn2low = 500;
 int btn2high = 600;
 
+// Button 3 analog range
 int btn3low = 700;
 int btn3high = 800;
 
+// Button 2+3 analog range
 int btn23low = 600;
 int btn23high = 700;
 
+// Button 1+2 analog range
 int btn12low = 300;
 int btn12high = 400;
 
@@ -25,8 +38,8 @@ int longpress = 50; //How long should a long press be
 int presstimeout = 3; //Set the firsttime value after this long of a press.
 
 void setup() {
-	Serial.begin(9600);
-	Serial.println("Ready.");
+  Serial.begin(9600);
+  Serial.println("Ready.");
   Serial.println(analogRead(1));
   pinMode(13, OUTPUT);
 }
