@@ -57,7 +57,7 @@ int buttonPin = 4; //Analog Pin for Control Buttons.
 // Menu Flag
 int menu = 0;
 
-void setup() {
+void setup() { // Initial Boot Sequence
   
 	Serial.begin(115200);
 	Serial.println("Ready.");
@@ -68,22 +68,22 @@ void setup() {
   
 }
 
-void loop() {
+void loop() { // 
   
 	readAnalogController(); //Listen for analog button commands.
 	
-	// Tell Box that we are waiting.
+	// Tell brain Box that we are waiting.
 	if (!stopLoop) {
 		box.write(160);
 		box.write(128);
-		delay(500);
+		delay(250);
 		int bl = digitalRead(backLight);
 		digitalWrite(backLight, !bl);
 	}
   
 }
 
-void serialEvent1() {
+void serialEvent1() { // Receive commands from the brain box
 	
 	if (stopLoop == 0) {
 		stopLoop = 1; // Stop the waiting loop, because the box has come online.
