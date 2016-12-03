@@ -3,6 +3,7 @@
 //###            Saab ParrotStar BT Control             ###
 //###                   Version 1.0                     ###
 //###                    Rob Lester                     ###
+//###             Hardware: Arduino MEGA                ###
 //###                                                   ###
 //#########################################################
 
