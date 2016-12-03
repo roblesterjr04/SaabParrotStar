@@ -9,13 +9,15 @@
 
 #define box Serial1
 
-int buttonPin = 0; //Analog Pin for Control Buttons.
-
+// Operational Values
 long millis_held;
 unsigned long firstTime = 0;
 int previous = 0;
 int current = 0;
 int executed = 0;
+
+// The analog ranges need to be determined. When a button is pressed, 
+// the value is printed to the console.
 
 // Button 1 analog range
 int btn1low = 200;
@@ -37,23 +39,31 @@ int btn23high = 700;
 int btn12low = 300;
 int btn12high = 400;
 
-int longpress = 50; //How long should a long press be
-int presstimeout = 3; //Set the firsttime value after this long of a press.
+// Button Press Debounce/Longpress settings
+int longpress = 1000; //How long should a long press be
+int presstimeout = 200; //Set the firsttime value after this long of a press.
 
+// Comms - don't change these
 int conRes = 128;
 int stopLoop = 0;
 int lastComm = 0;
 
-// OUTPUT PINS
+// PINS
 int greenPin = 6;
+int redPin = 11;
+int backLight = 13;
+int buttonPin = 4; //Analog Pin for Control Buttons.
+
+// Menu Flag
+int menu = 0;
 
 void setup() {
   
 	Serial.begin(115200);
 	Serial.println("Ready.");
-	pinMode(13, OUTPUT);
+	pinMode(backLight, OUTPUT);
 	pinMode(greenPin, OUTPUT);
-	digitalWrite(13, HIGH);
+	pinMode(redPin, OUTPUT);
 	box.begin(9600);
   
 }
@@ -67,20 +77,30 @@ void loop() {
 		box.write(160);
 		box.write(128);
 		delay(500);
+		int bl = digitalRead(backLight);
+		digitalWrite(backLight, !bl);
 	}
   
 }
 
 void serialEvent1() {
 	
-	if (stopLoop == 0) stopLoop = 1; // Stop the waiting loop, because the box has come online.
+	if (stopLoop == 0) {
+		stopLoop = 1; // Stop the waiting loop, because the box has come online.
+		digitalWrite(backLight, HIGH);
+	}
 	
 	int v = box.read(); // Read the command from the box.
 	
 	// Process specific commands from box
 	
-	if (v == 34) digitalWrite(greenPin, LOW);
-	if (v == 17) digitalWrite(greenPin, HIGH);
+	if (v == 34) {
+		digitalWrite(greenPin, LOW);
+	}
+	if (v == 17) {
+		digitalWrite(greenPin, HIGH);
+		digitalWrite(redPin, LOW);
+	}
 	
 	// End specific commands
 	
@@ -155,49 +175,50 @@ void serialEvent() {
 }
 
 void readAnalogController() {
-  current = analogRead(buttonPin);
-  //longpress = analogRead(1); // Use if there's a pot to set longpress time.
-  //if (current > 0) Serial.println(current); // Use this line to determine actual analog values initially.
-  
-  if (previous > 0 && current == 0) {
-    executed = 0;
-  }
-  
-  if (previous > 0 && current == 0 && millis_held < longpress) {
-    int btn = decodeButton(previous);
-    executeButton(btn, 0);
-  }
-  
-  if (current > 0 && previous == 0 && (millis() - firstTime) > presstimeout) {
-    firstTime = millis();
-  }
-  
-  if (current > 0) millis_held = (millis() - firstTime);
-  else {
-    millis_held = 0;
-    firstTime = 0;
-  }
-  
-  if (millis_held > longpress && executed == 0) {
-    
-    int btn = decodeButton(current);
-    executeButton(btn, 1);
-    executed = 1;
-    
-  }
-  //Serial.println(millis_held);
-  previous = current;
+	current = analogRead(buttonPin);
+	//longpress = analogRead(1); // Use if there's a pot to set longpress time.
+	//if (current > 0) Serial.println(current); // Use this line to determine actual analog values initially.
+	
+	if (previous > 0 && current == 0) {
+		executed = 0;
+	}
+	
+	if (previous > 0 && current == 0 && millis_held < longpress) {
+		int btn = decodeButton(previous);
+		executeButton(btn, 0);
+	}
+	
+	if (current > 0 && previous == 0 && (millis() - firstTime) > presstimeout) {
+		firstTime = millis();
+	}
+	
+	if (current > 0) millis_held = (millis() - firstTime);
+	else {
+		millis_held = 0;
+		firstTime = 0;
+	}
+	
+	if (millis_held > longpress && executed == 0) {
+	
+		int btn = decodeButton(current);
+		executeButton(btn, 1);
+		executed = 1;
+	
+	}
+	//Serial.println(millis_held);
+	previous = current;
 }
 
 int decodeButton(int value) {
-  
-  if (value > btn1low && value < btn1high) return 1;
-  else if (value > btn2low && value < btn2high) return 2;
-  else if (value > btn3low && value < btn3high) return 3;
-  else if (value > btn12low && value < btn12high) return 12;
-  else if (value > btn23low && value < btn23high) return 23;
-  
-  return 0;
+
+	Serial.println("Analog Value: " + String(value);
+	if (value > btn1low && value < btn1high) return 1;
+	else if (value > btn2low && value < btn2high) return 2;
+	else if (value > btn3low && value < btn3high) return 3;
+	else if (value > btn12low && value < btn12high) return 12;
+	else if (value > btn23low && value < btn23high) return 23;
+	
+	return 0;
   
 }
 
@@ -274,6 +295,7 @@ void endButton() {
 }
 
 void menuSelect() {
+	digitalWrite(redPin, HIGH);
 	command();
 	box.write(4);
 	releaseButton();
