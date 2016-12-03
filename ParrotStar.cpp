@@ -52,7 +52,7 @@ int lastComm = 0;
 int greenPin = 6;
 int redPin = 11;
 int backLight = 13;
-int buttonPin = 4; //Analog Pin for Control Buttons.
+int buttonPin = 0; //Analog Pin for Control Buttons.
 
 // Menu Flag
 int menu = 0;
