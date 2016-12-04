@@ -51,7 +51,6 @@ int lastComm = 0;
 // PINS
 int greenPin = 6;
 int redPin = 11;
-int backLight = 13;
 int buttonPin = 0; //Analog Pin for Control Buttons.
 
 // Menu Flag
@@ -61,9 +60,9 @@ void setup() { // Initial Boot Sequence
   
 	Serial.begin(115200);
 	Serial.println("Ready.");
-	pinMode(backLight, OUTPUT);
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
+	pinMode(13, OUTPUT);
 	box.begin(9600);
   
 }
@@ -77,8 +76,10 @@ void loop() { //
 		box.write(160);
 		box.write(128);
 		delay(250);
-		int bl = digitalRead(backLight);
-		digitalWrite(backLight, !bl);
+		int bl = digitalRead(greenPin);
+		digitalWrite(greenPin, !bl);
+		int dp = digitalRead(13);
+		digitalWrite(13, !dp);
 	}
   
 }
@@ -87,7 +88,7 @@ void serialEvent1() { // Receive commands from the brain box
 	
 	if (stopLoop == 0) {
 		stopLoop = 1; // Stop the waiting loop, because the box has come online.
-		digitalWrite(backLight, HIGH);
+		digitalWrite(13, LOW);
 	}
 	
 	int v = box.read(); // Read the command from the box.
@@ -96,6 +97,7 @@ void serialEvent1() { // Receive commands from the brain box
 	
 	if (v == 34) {
 		digitalWrite(greenPin, LOW);
+		digitalWrite(redPin, LOW);
 	}
 	if (v == 17) {
 		digitalWrite(greenPin, HIGH);
@@ -140,12 +142,12 @@ void serialEvent() {
 	// The below commands are strictly for sending 
 	// commands to box via the command line.
 	
-	String c = "";
-	while(Serial.available() > 0) {
+	/*while(Serial.available() > 0) {
 		int in = Serial.read();
 		c = c + in;
-	}
+	}*/
 
+	int c = Serial.read();
 
 	//int i = c.toInt();
 	if (c == 56 || c == 55 || c == 52) {
@@ -163,15 +165,14 @@ void serialEvent() {
 	} else {
 		box.write(160);
 		box.write(130);
-		box.write(c.toInt());
+		box.write(c);
 		delay(250);
 		box.write(160);
 		box.write(130);
 		box.write(0);
 	}
 	Serial.print("Rec: ");
-	Serial.println(c.toInt());
-	lastSerial = c.toInt();
+	Serial.println(c);
 }
 
 void readAnalogController() {
@@ -211,7 +212,7 @@ void readAnalogController() {
 
 int decodeButton(int value) {
 
-	Serial.println("Analog Value: " + String(value);
+	Serial.println("Analog Value: " + String(value));
 	if (value > btn1low && value < btn1high) return 1;
 	else if (value > btn2low && value < btn2high) return 2;
 	else if (value > btn3low && value < btn3high) return 3;
@@ -229,38 +230,39 @@ void executeButton(int button, int press) {
 		Serial.print("Momentary Press ");
 		switch (button) {
 			case 1:
-				Serial.println(button);
 				break;
 			case 2:
-				Serial.println(button);
 				break;
 			case 3:
-				Serial.println(button);
+				break;
+			case 12:
+				break;
+			case 23:
 				break;
 			default:
-				Serial.println(button);
 				break;
 		}
 	}
-  
+	Serial.println(button);
 }
 
 void longPressButton(int button) {
 	Serial.print("Long Press ");
 	switch (button) {
 		case 1:
-			Serial.println(button);
 			break;
 		case 2:
-			Serial.println(button);
 			break;
 		case 3:
-			Serial.println(button);
+			break;
+		case 12:
+			break;
+		case 23:
 			break;
 		default:
-			Serial.println(button);
 			break;
 	}
+	Serial.println(button);
 }
 
 // Box specific functions
