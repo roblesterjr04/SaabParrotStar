@@ -57,8 +57,9 @@ int greenPin = 5;
 int redPin = 4;
 int buttonPin = 0; //Analog Pin for Control Buttons.
 
-// Menu Flag
+// Context Flags
 int menu = 0;
+int resetConfirm = 0;
 
 void setup() { // Initial Boot Sequence
   
@@ -101,7 +102,6 @@ void serialEvent1() { // Receive commands from the brain box
 	
 	if (v == 34) {
 		digitalWrite(greenPin, LOW);
-		digitalWrite(redPin, LOW);
 	}
 	if (v == 17) {
 		digitalWrite(greenPin, HIGH);
@@ -222,6 +222,7 @@ int decodeButton(int value) {
 	else if (value > btn3low && value < btn3high) return 3;
 	else if (value > btn12low && value < btn12high) return 12;
 	else if (value > btn23low && value < btn23high) return 23;
+	else if (value > btn13low && value < btn13high) return 13;
 	
 	return 0;
   
@@ -234,14 +235,21 @@ void executeButton(int button, int press) {
 		Serial.print("Momentary Press ");
 		switch (button) {
 			case 1:
+				if (menu) menuSelect();
+				else callButton();
 				break;
 			case 2:
+				if (menu) down();
 				break;
 			case 3:
+				if (menu) up();
+				else endButton();
 				break;
 			case 12:
 				break;
 			case 23:
+				break;
+			case 13:
 				break;
 			default:
 				break;
@@ -254,14 +262,21 @@ void longPressButton(int button) {
 	Serial.print("Long Press ");
 	switch (button) {
 		case 1:
+			if (resetConfirm) reset();
+			else redial();
 			break;
 		case 2:
+			menuSelect();
 			break;
 		case 3:
+			if (menu) endButton();
 			break;
 		case 12:
 			break;
 		case 23:
+			resetConfirm = 1;
+			break;
+		case 13:
 			break;
 		default:
 			break;
@@ -295,6 +310,7 @@ void redial() {
 }
 
 void endButton() {
+	menu = 0;
 	command();
 	box.write(1);
 	releaseButton();
@@ -302,6 +318,7 @@ void endButton() {
 
 void menuSelect() {
 	digitalWrite(redPin, HIGH);
+	menu = 1;
 	command();
 	box.write(4);
 	releaseButton();
@@ -318,6 +335,7 @@ void down() {
 }
 
 void reset() {
+	resetConfirm = 0;
 	command();
 	box.write(3);
 	delay(1850);
