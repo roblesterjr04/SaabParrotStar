@@ -60,6 +60,7 @@ int buttonPin = 0; //Analog Pin for Control Buttons.
 // Context Flags
 int menu = 0;
 int resetConfirm = 0;
+int inCall = 0;
 
 void setup() { // Initial Boot Sequence
   
@@ -239,10 +240,10 @@ void executeButton(int button, int press) {
 				else callButton();
 				break;
 			case 2:
-				if (menu) down();
+				if (menu || inCall) down();
 				break;
 			case 3:
-				if (menu) up();
+				if (menu || inCall) up();
 				else endButton();
 				break;
 			case 12:
@@ -310,6 +311,7 @@ void redial() {
 }
 
 void endButton() {
+	digitalWrite(redPin, LOW);
 	menu = 0;
 	command();
 	box.write(1);
@@ -335,9 +337,11 @@ void down() {
 }
 
 void reset() {
+	digitalWrite(redPin, HIGH);
 	resetConfirm = 0;
 	command();
 	box.write(3);
 	delay(1850);
 	releaseButton();
+	digitalWrite(redPin, LOW);
 }
