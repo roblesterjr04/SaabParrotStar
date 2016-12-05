@@ -20,24 +20,28 @@ int executed = 0;
 // the value is printed to the console.
 
 // Button 1 analog range
-int btn1low = 200;
-int btn1high = 300;
+int btn1low = 150;
+int btn1high = 200;
 
 // Button 2 analog range
-int btn2low = 500;
-int btn2high = 600;
+int btn2low = 800;
+int btn2high = 850;
 
 // Button 3 analog range
-int btn3low = 700;
-int btn3high = 800;
+int btn3low = 920;
+int btn3high = 930;
 
 // Button 2+3 analog range
-int btn23low = 600;
-int btn23high = 700;
+int btn23low = 910;
+int btn23high = 920;
 
 // Button 1+2 analog range
-int btn12low = 300;
-int btn12high = 400;
+int btn12low = 400;
+int btn12high = 500;
+
+// Button 1+3 analog range
+int btn13low = 620;
+int btn13high = 630;
 
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
