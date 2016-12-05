@@ -53,8 +53,8 @@ int stopLoop = 0;
 int lastComm = 0;
 
 // PINS
-int greenPin = 6;
-int redPin = 11;
+int greenPin = 5;
+int redPin = 4;
 int buttonPin = 0; //Analog Pin for Control Buttons.
 
 // Menu Flag
