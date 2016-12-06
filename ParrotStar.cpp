@@ -298,13 +298,15 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
-	blinkLed(greenLed, 3);
+	if (digitalRead(auxPin1) == 1) blinkLed(greenLed, 3);
+	else blinkLed(redLed, 3);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
-	blinkLed(redLed, 3);
+	if (digitalRead(auxPin2) == 1) blinkLed(greenLed, 3);
+	else blinkLed(redLed, 3);
 }
 
 void blinkLed(int led, int times) {
