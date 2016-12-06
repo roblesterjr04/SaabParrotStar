@@ -103,17 +103,17 @@ void serialEvent1() { // Receive commands from the brain box
 	
 	if (stopLoop == 0) {
 		stopLoop = 1; // Stop the waiting loop, because the box has come online.
-		digitalWrite(13, LOW);
+		digitalWrite(ledPin, LOW);
 	}
 	
 	int v = box.read(); // Read the command from the box.
 	
 	// Process specific commands from box
 	
-	if (v == 34) {
+	if (v == 34) { // At rest
 		digitalWrite(greenPin, LOW);
 	}
-	if (v == 17) {
+	if (v == 17) { // Phone is engaged..?
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 	}
@@ -163,7 +163,6 @@ void serialEvent() {
 
 	int c = Serial.read();
 
-	//int i = c.toInt();
 	if (c == 56 || c == 55 || c == 52) {
 		box.write(160);
 		box.write(130);
@@ -277,10 +276,10 @@ void longPressButton(int button) {
 			else redial();
 			break;
 		case 2:
-			auxEnable1();			
+			if (!menu && !resetConfirm && !inCall) auxEnable1();			
 			break;
 		case 3:
-			if (menu) endButton();
+			if (menu || inCall) endButton();
 			else auxEnable2();
 			break;
 		case 12:
@@ -299,11 +298,23 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
+	blinkLed(greenLed, 3);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
+	blinkLed(redLed, 3);
+}
+
+void blinkLed(int led, int times) {
+	int counter = 0;
+	while (counter < times) {
+		digitalWrite(led, HIGH);
+		delay(100);
+		digitalWrite(led, LOW);
+		delay(100);
+	}
 }
 
 // Box specific functions
