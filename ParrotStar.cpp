@@ -8,6 +8,7 @@
 //#########################################################
 
 #define box Serial1
+#include <EEPROM.h>
 
 // Operational Values
 long millis_held;
@@ -45,7 +46,7 @@ int btn13high = 630;
 
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
-int presstimeout = 200; //Set the firsttime value after this long of a press.
+int presstimeout = 100; //Set the firsttime value after this long of a press.
 
 // Comms - don't change these
 int conRes = 128;
@@ -55,7 +56,13 @@ int lastComm = 0;
 // PINS
 int greenPin = 5;
 int redPin = 4;
-int buttonPin = 0; //Analog Pin for Control Buttons.
+int buttonPin = 0; // Analog Pin for Control Buttons.
+int auxPin1 = 7; // Control an aux relay if included in circuit.
+int auxPin2 = 8; // Control an aux relay if included in circuit. 2 seems useful.
+int ledPin = 13; // On Board LED
+
+int auxPinMem1 = 0; // Aux 1 setting byte on EEPROM
+int auxPinMem2 = 1; // Aux 2 setting byte on EEPROM
 
 // Context Flags
 int menu = 0;
@@ -68,9 +75,11 @@ void setup() { // Initial Boot Sequence
 	Serial.println("Ready.");
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
-	pinMode(13, OUTPUT);
+	pinMode(ledPin, OUTPUT);
 	box.begin(9600);
-  
+	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
+	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
+	
 }
 
 void loop() { // 
@@ -84,8 +93,8 @@ void loop() { //
 		delay(250);
 		int bl = digitalRead(greenPin);
 		digitalWrite(greenPin, !bl);
-		int dp = digitalRead(13);
-		digitalWrite(13, !dp);
+		int dp = digitalRead(ledPin);
+		digitalWrite(ledPin, !dp);
 	}
   
 }
@@ -241,6 +250,7 @@ void executeButton(int button, int press) {
 				break;
 			case 2:
 				if (menu || inCall) down();
+				else menuSelect();
 				break;
 			case 3:
 				if (menu || inCall) up();
@@ -267,10 +277,11 @@ void longPressButton(int button) {
 			else redial();
 			break;
 		case 2:
-			menuSelect();
+			auxEnable1();			
 			break;
 		case 3:
 			if (menu) endButton();
+			else auxEnable2();
 			break;
 		case 12:
 			break;
@@ -283,6 +294,16 @@ void longPressButton(int button) {
 			break;
 	}
 	Serial.println(button);
+}
+
+void auxEnable1() {
+	digitalWrite(auxPin1, !digitalRead(auxPin1));
+	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
+}
+
+void auxEnable2() {
+	digitalWrite(auxPin2, !digitalRead(auxPin2));
+	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
 }
 
 // Box specific functions
