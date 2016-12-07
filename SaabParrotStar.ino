@@ -144,15 +144,10 @@ void serialEvent1() { // Receive commands from the brain box
 	lastComm = v; // Set our last command
 }
 
-void serialEvent() {
+/*void serialEvent() {
 	
 	// The below commands are strictly for sending 
 	// commands to box via the command line.
-	
-	/*while(Serial.available() > 0) {
-		int in = Serial.read();
-		c = c + in;
-	}*/
 
 	int c = Serial.read();
 
@@ -179,7 +174,7 @@ void serialEvent() {
 	}
 	Serial.print("Rec: ");
 	Serial.println(c);
-}
+}*/
 
 void readAnalogController() {
 	current = analogRead(buttonPin);
@@ -220,13 +215,11 @@ void readAnalogController() {
 		
 	}
 	
-	//Serial.println(millis_held);
 	previous = current;
 }
 
 int decodeButton(int value) {
 
-	Serial.println("Analog Value: " + String(value));
 	if (value > btn1low && value < btn1high) return 1;
 	else if (value > btn2low && value < btn2high) return 2;
 	else if (value > btn3low && value < btn3high) return 3;
@@ -251,7 +244,6 @@ void executeButton(int button, int press) {
 				break;
 		}
 	} else {
-		Serial.print("Momentary Press ");
 		switch (button) {
 			case 1:
 				if (menu) menuSelect();
@@ -269,11 +261,9 @@ void executeButton(int button, int press) {
 				break;
 		}
 	}
-	Serial.println(button);
 }
 
 void longPressButton(int button) {
-	Serial.print("Long Press ");
 	switch (button) {
 		case 1:
 			redial();
@@ -288,7 +278,6 @@ void longPressButton(int button) {
 		default:
 			break;
 	}
-	Serial.println(button);
 }
 
 void auxEnable1() {
