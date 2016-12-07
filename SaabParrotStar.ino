@@ -73,6 +73,7 @@ void setup() { // Initial Boot Sequence
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
 	
 }
+void(* resetFunc) (void) = 0;
 
 void loop() { // 
   
@@ -211,6 +212,14 @@ void readAnalogController() {
 		executed = 1;
 	
 	}
+	
+	if (millis_held > longpress * 2) {
+		
+		int btn = decodeButton(current);
+		executeButton(btn, 2);
+		
+	}
+	
 	//Serial.println(millis_held);
 	previous = current;
 }
@@ -227,8 +236,20 @@ int decodeButton(int value) {
 }
 
 void executeButton(int button, int press) {
-	if (press) {
+	if (press == 1) {
 		longPressButton(button);
+	} else if (press == 2) {
+		switch (button) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				reset();
+				break;
+			default:
+				break;
+		}
 	} else {
 		Serial.print("Momentary Press ");
 		switch (button) {
@@ -345,11 +366,15 @@ void down() {
 }
 
 void reset() {
+	digitalWrite(greenPin, LOW);
 	digitalWrite(redPin, HIGH);
 	resetConfirm = 0;
 	command();
 	box.write(3);
-	delay(1850);
-	releaseButton();
+	delay(2000);
+	//releaseButton();
 	digitalWrite(redPin, LOW);
+	EEPROM.update(auxPinMem1, LOW);
+	EEPROM.update(auxPinMem2, LOW);
+	resetFunc();
 }
