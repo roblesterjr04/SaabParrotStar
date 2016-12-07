@@ -23,32 +23,20 @@ int executed = 0;
 // Below ranges based on a 1K resistor pulling down the button value line.
 
 // Button 1 analog range
-int btn1low = 390;
-int btn1high = 410;
+int btn1low = 220;
+int btn1high = 235;
 
 // Button 2 analog range
-int btn2low = 245;
-int btn2high = 265;
+int btn2low = 55;
+int btn2high = 65;
 
 // Button 3 analog range
-int btn3low = 65;
-int btn3high = 80;
-
-// Button 2+3 analog range
-int btn23low = 1023;
-int btn23high = 1023;
-
-// Button 1+2 analog range
-int btn12low = 1023;
-int btn12high = 1023;
-
-// Button 1+3 analog range
-int btn13low = 1023;
-int btn13high = 1023;
+int btn3low = 370;
+int btn3high = 380;
 
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
-int presstimeout = 100; //Set the firsttime value after this long of a press.
+int presstimeout = 75; //Set the firsttime value after this long of a press.
 
 // Comms - don't change these
 int conRes = 128;
@@ -73,7 +61,7 @@ int inCall = 0;
 
 void setup() { // Initial Boot Sequence
   
-	Serial.begin(115200);
+	Serial.begin(9600);
 	Serial.println("Ready.");
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
@@ -95,8 +83,8 @@ void loop() { //
 		delay(250);
 		int bl = digitalRead(greenPin);
 		digitalWrite(greenPin, !bl);
-		int dp = digitalRead(ledPin);
-		digitalWrite(ledPin, !dp);
+		//int dp = digitalRead(ledPin);
+		//digitalWrite(ledPin, !dp);
 	}
   
 }
@@ -246,7 +234,11 @@ void executeButton(int button, int press) {
 		Serial.print("Momentary Press ");
 		switch (button) {
 			case 1:
-				if (menu) menuSelect();
+				if (menu) {
+				  menuSelect();
+				  menu = 0;
+				  digitalWrite(redPin, LOW);
+				}
 				else callButton();
 				break;
 			case 2:
@@ -256,12 +248,6 @@ void executeButton(int button, int press) {
 			case 3:
 				if (menu || inCall) up();
 				else endButton();
-				break;
-			case 12:
-				break;
-			case 23:
-				break;
-			case 13:
 				break;
 			default:
 				break;
@@ -274,22 +260,14 @@ void longPressButton(int button) {
 	Serial.print("Long Press ");
 	switch (button) {
 		case 1:
-			if (resetConfirm) reset();
-			else redial();
+			redial();
 			break;
 		case 2:
-			if (!menu && !resetConfirm && !inCall) auxEnable1();			
+			if (!menu && !inCall) auxEnable1();
 			break;
 		case 3:
 			if (menu || inCall) endButton();
 			else auxEnable2();
-			break;
-		case 12:
-			break;
-		case 23:
-			resetConfirm = 1;
-			break;
-		case 13:
 			break;
 		default:
 			break;
@@ -300,24 +278,25 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
-	if (digitalRead(auxPin1) == 1) blinkLed(greenLed, 3);
-	else blinkLed(redLed, 3);
+	if (digitalRead(auxPin1) == 1) blinkLed(greenPin, 3);
+	else blinkLed(redPin, 3);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
-	if (digitalRead(auxPin2) == 1) blinkLed(greenLed, 3);
-	else blinkLed(redLed, 3);
+	if (digitalRead(auxPin2) == 1) blinkLed(greenPin, 3);
+	else blinkLed(redPin, 3);
 }
 
 void blinkLed(int led, int times) {
 	int counter = 0;
 	while (counter < times) {
 		digitalWrite(led, HIGH);
-		delay(100);
+		delay(50);
 		digitalWrite(led, LOW);
-		delay(100);
+		delay(50);
+		counter++;
 	}
 }
 
