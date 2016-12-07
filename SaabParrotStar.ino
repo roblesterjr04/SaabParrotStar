@@ -66,6 +66,8 @@ void setup() { // Initial Boot Sequence
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
 	pinMode(ledPin, OUTPUT);
+	pinMode(auxPin1, OUTPUT);
+	pinMode(auxPin2, OUTPUT);
 	box.begin(9600);
 	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
@@ -219,9 +221,6 @@ int decodeButton(int value) {
 	if (value > btn1low && value < btn1high) return 1;
 	else if (value > btn2low && value < btn2high) return 2;
 	else if (value > btn3low && value < btn3high) return 3;
-	else if (value > btn12low && value < btn12high) return 12;
-	else if (value > btn23low && value < btn23high) return 23;
-	else if (value > btn13low && value < btn13high) return 13;
 	
 	return 0;
   
@@ -234,11 +233,7 @@ void executeButton(int button, int press) {
 		Serial.print("Momentary Press ");
 		switch (button) {
 			case 1:
-				if (menu) {
-				  menuSelect();
-				  menu = 0;
-				  digitalWrite(redPin, LOW);
-				}
+				if (menu) menuSelect();
 				else callButton();
 				break;
 			case 2:
@@ -278,15 +273,13 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
-	if (digitalRead(auxPin1) == 1) blinkLed(greenPin, 3);
-	else blinkLed(redPin, 3);
+	blinkLed(greenPin, 3);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
-	if (digitalRead(auxPin2) == 1) blinkLed(greenPin, 3);
-	else blinkLed(redPin, 3);
+	blinkLed(greenPin, 3);
 }
 
 void blinkLed(int led, int times) {
