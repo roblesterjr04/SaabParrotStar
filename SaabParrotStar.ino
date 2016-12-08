@@ -7,7 +7,6 @@
 //###                                                   ###
 //#########################################################
 
-#define box Serial1
 #include <EEPROM.h>
 
 // Operational Values
@@ -58,6 +57,8 @@ int auxPinMem2 = 1; // Aux 2 setting byte on EEPROM
 int menu = 0;
 int resetConfirm = 0;
 int inCall = 0;
+
+#define box Serial1
 
 void setup() { // Initial Boot Sequence
 	pinMode(greenPin, OUTPUT);
