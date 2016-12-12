@@ -7087,9 +7087,10 @@ Source: 008-0260-0_E.pdf</description>
 <part name="J2" library="SparkFun-Connectors" deviceset="M02" device="PTH3"/>
 <part name="J3" library="SparkFun-Connectors" deviceset="M04" device="NO_SILK_ALL_ROUND"/>
 <part name="J4" library="SparkFun-Connectors" deviceset="M05" device="NO_SILK"/>
-<part name="C1" library="SparkFun-Capacitors" deviceset="CAP" device="KIT"/>
-<part name="C2" library="SparkFun-Capacitors" deviceset="CAP" device="KIT"/>
+<part name="C1" library="SparkFun-Capacitors" deviceset="CAP" device="KIT" value="22uF"/>
+<part name="C2" library="SparkFun-Capacitors" deviceset="CAP" device="KIT" value="22uF"/>
 <part name="Q1" library="crystal" deviceset="CRYSTAL" device="HC49S"/>
+<part name="R2" library="resistor" deviceset="R-US_" device="0204/7" value="10K"/>
 </parts>
 <sheets>
 <sheet>
@@ -7109,6 +7110,7 @@ Source: 008-0260-0_E.pdf</description>
 <instance part="C1" gate="G$1" x="86.36" y="10.16"/>
 <instance part="C2" gate="G$1" x="101.6" y="10.16"/>
 <instance part="Q1" gate="G$1" x="66.04" y="27.94"/>
+<instance part="R2" gate="G$1" x="-5.08" y="10.16"/>
 </instances>
 <busses>
 </busses>
@@ -7243,6 +7245,11 @@ Source: 008-0260-0_E.pdf</description>
 <wire x1="137.16" y1="40.64" x2="144.78" y2="40.64" width="0.1524" layer="91"/>
 <label x="142.24" y="40.64" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="R2" gate="G$1" pin="2"/>
+<wire x1="0" y1="10.16" x2="10.16" y2="10.16" width="0.1524" layer="91"/>
+<label x="5.08" y="10.16" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="ABTN" class="0">
 <segment>
@@ -7341,6 +7348,18 @@ Source: 008-0260-0_E.pdf</description>
 <pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="101.6" y1="15.24" x2="101.6" y2="22.86" width="0.1524" layer="91"/>
 <label x="101.6" y="22.86" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="RESET" class="0">
+<segment>
+<pinref part="ATMEGA328P" gate="G$1" pin="PC6(/RESET)"/>
+<wire x1="-10.16" y1="86.36" x2="-20.32" y2="86.36" width="0.1524" layer="91"/>
+<label x="-20.32" y="86.36" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="R2" gate="G$1" pin="1"/>
+<wire x1="-10.16" y1="10.16" x2="-20.32" y2="10.16" width="0.1524" layer="91"/>
+<label x="-20.32" y="10.16" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
