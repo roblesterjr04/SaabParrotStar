@@ -34,10 +34,10 @@ Arduino project designed to interface between Saab's onstar buttons and a parrot
 |--         |Hold      |Exit                     |
 
 ## Board Version History
-### Version *Prototype V1*
+### Version *Prototype V1 (Main.brd)*
 This board will utilize a Teensy 3.2 as the microcontroller, directly attached to the breakout board housing an AND gate for LED power, 2 relays for 12V switching, a pull-down resistor for the analog button stream, and pads for the cabling to attach. The Teensy will have a USB extension running up the line to just behind the *OnStar* button set for easy programming when the unit is in the car.
 
-### Version *Beta 1*
+### Version *Beta 1 (A328.brd)*
 Not designed yet. Will not have USB breakout. Will likely use Atmega328 chip as microcontroller. Chip will be bootloaded and programmed on an Arduino board, then installed. Additional USB programming will be done through the molex connector using a USB breakout board obtained from SparkFun.
 
 ## Future Ideas...
