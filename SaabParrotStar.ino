@@ -26,16 +26,17 @@ int btn1low = 101;
 int btn1high = 299;
 
 // Button 2 analog range
-int btn2low = 1;
+int btn2low = 6;
 int btn2high = 100;
 
 // Button 3 analog range
 int btn3low = 300;
-int btn3high = 400;
+int btn3high = 500;
 
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
 int presstimeout = 200; //Set the firsttime value after this long of a press.
+int low = 5;
 
 // Comms - don't change these
 int conRes = 128;
@@ -69,7 +70,8 @@ void setup() { // Initial Boot Sequence
 	box.begin(9600);
 	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
-	blinkLed(ledPin, 5);
+	blinkLed(ledPin, 3);
+
 }
 void(* resetFunc) (void) = 0;
 
@@ -151,21 +153,20 @@ void serialEvent1() { // Receive commands from the brain box
 
 void readAnalogController() {
 	current = analogRead(buttonPin);
-	
-	if (previous > 0 && current == 0) {
+	if (previous > low && current < low) {
 		executed = 0;
 	}
 	
-	if (previous > 0 && current == 0 && millis_held < longpress) {
+	if (previous > low && current < low && millis_held < longpress) {
 		int btn = decodeButton(previous);
 		executeButton(btn, 0);
 	}
 	
-	if (current > 0 && previous == 0 && (millis() - firstTime) > presstimeout) {
+	if (current > low && previous < low && (millis() - firstTime) > presstimeout) {
 		firstTime = millis();
 	}
 	
-	if (current > 0) millis_held = (millis() - firstTime);
+	if (current > low) millis_held = (millis() - firstTime);
 	else {
 		millis_held = 0;
 		firstTime = 0;
