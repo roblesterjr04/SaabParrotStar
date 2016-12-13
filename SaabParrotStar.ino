@@ -36,7 +36,7 @@ int btn3high = 500;
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
 int presstimeout = 200; //Set the firsttime value after this long of a press.
-int low = 5;
+int low = 5; //Set the low threshold of the analog input. Anything below this will count as null/0/zilch. 
 
 // Comms - don't change these
 int conRes = 128;
@@ -70,8 +70,7 @@ void setup() { // Initial Boot Sequence
 	box.begin(9600);
 	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
-	blinkLed(ledPin, 3);
-
+	blinkLed(ledPin, 3); // Blink the board LED (if equipped) to confirm program is loaded and working.
 }
 void(* resetFunc) (void) = 0;
 
@@ -242,7 +241,7 @@ void longPressButton(int button) {
 			break;
 		case 2:
 			if (!menu && !inCall) auxEnable1();
-      if (inCall) menuSelect();
+			if (inCall) menuSelect();
 			break;
 		case 3:
 			if (menu || inCall) endButton();
@@ -300,6 +299,7 @@ void redial() {
 }
 
 void endButton() {
+	blinkLed(redPin, 2);
 	command();
 	box.write(1);
 	releaseButton();
