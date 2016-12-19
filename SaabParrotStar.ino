@@ -156,7 +156,7 @@ void serialEvent1() { // Receive commands from the brain box
 
 void readAnalogController() {
 	delay(10);
-	current = analogRead(buttonPin);
+	//current = analogRead(buttonPin);
 	
 	if (current > 10) Serial.println(current);
 	
