@@ -59,11 +59,23 @@ int menu = 0;
 int resetConfirm = 0;
 int inCall = 0;
 
-#define box Serial1
+// Debug data
+int debug = false;
+int at328 = false;
+
+#if defined(__AVR_ATmega328__)
+#define box Serial
+at328 = true;
+#else
+$define box Serial1
+#endif
 
 void setup() { // Initial Boot Sequence
 	
-	//while (!Serial) {}
+	if (!at328) {
+		while(!Serial) {}
+		Serial.begin(9600);
+	}
 	
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
@@ -71,10 +83,10 @@ void setup() { // Initial Boot Sequence
 	pinMode(auxPin1, OUTPUT);
 	pinMode(auxPin2, OUTPUT);
 	box.begin(9600);
-	Serial.begin(9600);
 	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
-	blinkLed(ledPin, 3); // Blink the board LED (if equipped) to confirm program is loaded and working.
+	blinkLed(ledPin, 10); // Blink the board LED (if equipped) to confirm program is loaded and working.
+	
 }
 void(* resetFunc) (void) = 0;
 
@@ -91,6 +103,10 @@ void loop() { //
 	}
 }
 
+void serialEvent() {
+	serialEvent1(); // Execute the same serial event no matter which port is running.
+}
+
 void serialEvent1() { // Receive commands from the brain box
 	
 	if (stopLoop == 0) {
@@ -99,6 +115,9 @@ void serialEvent1() { // Receive commands from the brain box
 	}
 	
 	int v = box.read(); // Read the command from the box.
+	
+	if v == "DEBUG";
+	debug = true;
 	
 	// Process specific commands from box
 	
@@ -156,10 +175,8 @@ void serialEvent1() { // Receive commands from the brain box
 
 void readAnalogController() {
 	delay(10);
-	//current = analogRead(buttonPin);
-	
-	if (current > 10) Serial.println(current);
-	
+	current = analogRead(buttonPin);
+		
 	if (previous > low && current <= low) {
 		executed = 0;
 	}
@@ -167,6 +184,7 @@ void readAnalogController() {
 	if (previous > low && current <= low && millis_held < longpress) {
 		int btn = decodeButton(previous);
 		executeButton(btn, 0);
+		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Short");
 	}
 	
 	if (current > low && previous <= low && (millis() - firstTime) > presstimeout) {
@@ -184,6 +202,7 @@ void readAnalogController() {
 		int btn = decodeButton(current);
 		executeButton(btn, 1);
 		executed = 1;
+		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Long");
 	
 	}
 	
@@ -191,6 +210,8 @@ void readAnalogController() {
 		
 		int btn = decodeButton(current);
 		executeButton(btn, 2);
+		
+		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Extra Long");
 		
 	}
 	
