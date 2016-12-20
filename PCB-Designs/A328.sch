@@ -7901,8 +7901,13 @@ Source: 008-0260-0_E.pdf</description>
 <net name="GND" class="0">
 <segment>
 <pinref part="ATMEGA328P" gate="G$1" pin="GND@2"/>
-<wire x1="-10.16" y1="30.48" x2="-20.32" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="30.48" x2="-12.7" y2="30.48" width="0.1524" layer="91"/>
 <label x="-20.32" y="30.48" size="1.778" layer="95"/>
+<pinref part="ATMEGA328P" gate="G$1" pin="GND@1"/>
+<wire x1="-12.7" y1="30.48" x2="-20.32" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="33.02" x2="-12.7" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="33.02" x2="-12.7" y2="30.48" width="0.1524" layer="91"/>
+<junction x="-12.7" y="30.48"/>
 </segment>
 <segment>
 <pinref part="J3" gate="G$1" pin="2"/>
@@ -7954,8 +7959,16 @@ Source: 008-0260-0_E.pdf</description>
 <net name="+5V" class="0">
 <segment>
 <pinref part="ATMEGA328P" gate="G$1" pin="VCC"/>
-<wire x1="-10.16" y1="78.74" x2="-20.32" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="78.74" x2="-12.7" y2="78.74" width="0.1524" layer="91"/>
 <label x="-20.32" y="78.74" size="1.778" layer="95"/>
+<pinref part="ATMEGA328P" gate="G$1" pin="AVCC"/>
+<wire x1="-12.7" y1="78.74" x2="-20.32" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="81.28" x2="-12.7" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="81.28" x2="-12.7" y2="78.74" width="0.1524" layer="91"/>
+<junction x="-12.7" y="78.74"/>
+<pinref part="ATMEGA328P" gate="G$1" pin="AREF"/>
+<wire x1="-10.16" y1="71.12" x2="-12.7" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="-12.7" y1="71.12" x2="-12.7" y2="78.74" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="J4" gate="G$1" pin="1"/>
