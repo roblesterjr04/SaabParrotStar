@@ -3,7 +3,7 @@
 //###            Saab ParrotStar BT Control             ###
 //###                   Version 1.0                     ###
 //###                    Rob Lester                     ###
-//###             Hardware: Arduino MEGA                ###
+//###          Hardware: Atmega328p/Teensy3.2           ###
 //###                                                   ###
 //#########################################################
 
@@ -61,13 +61,13 @@ int inCall = 0;
 
 // Debug data
 int debug = false;
-int at328 = false;
 
-#if defined(__AVR_ATmega328__)
+#if defined(__AVR_ATmega328P__)
 #define box Serial
-at328 = true;
+int at328 = true;
 #else
-$define box Serial1
+#define box Serial1
+int at328 = false;
 #endif
 
 void setup() { // Initial Boot Sequence
@@ -93,13 +93,22 @@ void(* resetFunc) (void) = 0;
 void loop() { // 
 	readAnalogController(); //Listen for analog button commands.
 	
-	// Tell brain Box that we are waiting.
+	// Tell parrot brain Box that we are waiting.
 	if (!stopLoop) {
 		box.write(160);
 		box.write(128);
 		delay(250);
 		int bl = digitalRead(greenPin);
 		digitalWrite(greenPin, !bl);
+	}
+}
+
+void debugPrint(String message) {
+	if (!debug) return;
+	if (at328) {
+		box.println(message);
+	} else {
+		Serial.println(message);
 	}
 }
 
@@ -114,10 +123,29 @@ void serialEvent1() { // Receive commands from the brain box
 		digitalWrite(ledPin, LOW);
 	}
 	
-	int v = box.read(); // Read the command from the box.
+	char v = -1;
+	char c = '-';
+	if (at328) {
+		v = box.read();
+		c = '-';
+	} else {
+		c = Serial.read();
+		v = box.read(); // Read the command from the box.
+	}
 	
-	if v == "DEBUG";
-	debug = true;
+	if (v == 'D' || c == 'D') {
+		digitalWrite(ledPin, HIGH);
+		digitalWrite(greenPin, HIGH);
+		debug = true;
+		debugPrint("Button Debugging Enabled.");
+	}
+	
+	if (v == 'E' || c == 'E') {
+		digitalWrite(ledPin, LOW);
+		digitalWrite(greenPin, LOW);
+		debugPrint("Button Debugging Disabled.");
+		debug = false;
+	}
 	
 	// Process specific commands from box
 	
@@ -184,7 +212,8 @@ void readAnalogController() {
 	if (previous > low && current <= low && millis_held < longpress) {
 		int btn = decodeButton(previous);
 		executeButton(btn, 0);
-		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Short");
+		debugPrint("Voltage: " + String(current));
+		debugPrint("Button: " + String(btn));
 	}
 	
 	if (current > low && previous <= low && (millis() - firstTime) > presstimeout) {
@@ -202,8 +231,9 @@ void readAnalogController() {
 		int btn = decodeButton(current);
 		executeButton(btn, 1);
 		executed = 1;
-		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Long");
-	
+		debugPrint("Voltage: " + String(current));
+		debugPrint("Button: " + String(btn));
+				
 	}
 	
 	if (millis_held > longpress * 10) {
@@ -211,7 +241,8 @@ void readAnalogController() {
 		int btn = decodeButton(current);
 		executeButton(btn, 2);
 		
-		if (debug) box.println("Voltage: " + current + " - Button: " + btn + " - Press: Extra Long");
+		debugPrint("Voltage: " + String(current));
+		debugPrint("Button: " + String(btn));
 		
 	}
 	
@@ -351,6 +382,7 @@ void down() {
 }
 
 void reset() {
+	debugPrint("Resetting Device. Goodbye.");
 	digitalWrite(greenPin, LOW);
 	digitalWrite(redPin, HIGH);
 	resetConfirm = 0;
