@@ -160,12 +160,12 @@ void serialEvent1() { // Receive commands from the brain box
 		digitalWrite(redPin, LOW);
 		inCall = 1;
 	}
-	if (v == 32) {
+	/*if (v == 32) { // We don't have the red pin hooked up in this model.
 		digitalWrite(greenPin, LOW);
 		digitalWrite(redPin, HIGH);
 		menu = 1;
-	}
-	if (v == 2) {
+	}*/
+	if (v == 2 || v == 32) {
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 		menu = 1;
