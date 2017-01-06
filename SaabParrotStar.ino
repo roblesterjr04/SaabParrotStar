@@ -22,16 +22,16 @@ int executed = 0;
 // Below ranges based on a 1K resistor pulling down the button value line.
 
 // Button 1 analog range
-int btn1low = 300;
-int btn1high = 400;
+int btn1low = 200;
+int btn1high = 300;
 
 // Button 2 analog range
 int btn2low = 50;
-int btn2high = 300;
+int btn2high = 200;
 
 // Button 3 analog range
-int btn3low = 500;
-int btn3high = 800;
+int btn3low = 350;
+int btn3high = 500;
 
 // Button Press Debounce/Longpress settings
 int longpress = 1000; //How long should a long press be
@@ -62,20 +62,11 @@ int inCall = 0;
 // Debug data
 int debug = false;
 
-#if defined(__AVR_ATmega328P__)
-#define box Serial
 int at328 = true;
-#else
-#define box Serial1
-int at328 = false;
-#endif
+
+#define box Serial
 
 void setup() { // Initial Boot Sequence
-	
-	if (!at328) {
-		while(!Serial) {}
-		Serial.begin(9600);
-	}
 	
 	pinMode(greenPin, OUTPUT);
 	pinMode(redPin, OUTPUT);
@@ -112,40 +103,14 @@ void debugPrint(String message) {
 	}
 }
 
-void serialEvent() {
-	serialEvent1(); // Execute the same serial event no matter which port is running.
-}
-
-void serialEvent1() { // Receive commands from the brain box
+void serialEvent() { // Receive commands from the brain box
 	
 	if (stopLoop == 0) {
 		stopLoop = 1; // Stop the waiting loop, because the box has come online.
 		digitalWrite(ledPin, LOW);
 	}
-	
-	char v = -1;
-	char c = '-';
-	if (at328) {
-		v = box.read();
-		c = '-';
-	} else {
-		c = Serial.read();
-		v = box.read(); // Read the command from the box.
-	}
-	
-	if (v == 'D' || c == 'D') {
-		digitalWrite(ledPin, HIGH);
-		digitalWrite(greenPin, HIGH);
-		debug = true;
-		debugPrint("Button Debugging Enabled.");
-	}
-	
-	if (v == 'E' || c == 'E') {
-		digitalWrite(ledPin, LOW);
-		digitalWrite(greenPin, LOW);
-		debugPrint("Button Debugging Disabled.");
-		debug = false;
-	}
+
+  int v = box.read();
 	
 	// Process specific commands from box
 	
