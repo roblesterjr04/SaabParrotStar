@@ -20,7 +20,7 @@ Arduino project designed to interface between Saab's onstar buttons and a parrot
 |--         |Hold      |Redial                   |
 |Dot        |Press Once|Volume Up                |
 |--         |Hold      |Volume Down              |
-|Red Cross  |Press Once|Hang Up                  |
+|Red Cross  |Press Once|Hang Up                  |
 |--         |Hold      |Hang Up                  |
 
 ### Menu Operation
