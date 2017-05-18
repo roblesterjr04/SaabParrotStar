@@ -76,8 +76,7 @@ void setup() { // Initial Boot Sequence
 	box.begin(9600);
 	digitalWrite(auxPin1, EEPROM.read(auxPinMem1));
 	digitalWrite(auxPin2, EEPROM.read(auxPinMem2));
-	blinkLed(ledPin, 10); // Blink the board LED (if equipped) to confirm program is loaded and working.
-	
+	digitalWrite(ledPin, 1);
 }
 void(* resetFunc) (void) = 0;
 
@@ -114,29 +113,27 @@ void serialEvent() { // Receive commands from the brain box
 	
 	// Process specific commands from box
 	
-	if (v == 34) { // At rest
+	if (v == 34) { 
+		// At rest
 		digitalWrite(greenPin, LOW);
 		digitalWrite(redPin, LOW);
 		inCall = 0;
 		menu = 0;
 	}
-	if (v == 17) { // Phone is engaged..?
+	if (v == 17) { 
+		// Phone is engaged
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 		inCall = 1;
 	}
-	/*if (v == 32) { // We don't have the red pin hooked up in this model.
-		digitalWrite(greenPin, LOW);
-		digitalWrite(redPin, HIGH);
-		menu = 1;
-	}*/
 	if (v == 2 || v == 32) {
+		// Menu State
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 		menu = 1;
 	}
 	if (v == 119) {
-		blinkLed(greenPin, 3);
+		// Possibly incoming call?
 	}
 	
 	// End specific commands
@@ -289,6 +286,7 @@ void auxEnable2() {
 	blinkLed(greenPin, 3);
 }
 
+// Blink an LED. Do not use inside the main loop, or the serial interrupts.
 void blinkLed(int led, int times) {
 	int counter = 0;
 	while (counter < times) {
