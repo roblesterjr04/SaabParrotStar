@@ -18,9 +18,9 @@ Arduino project designed to interface between Saab's onstar buttons and a parrot
 |:---------:|:--------:|:-----------------------:|
 |*OnStar*   |Press Once|Call Waiting/Private Mode|
 |--         |Hold      |Redial                   |
-|Dot        |Press Once|Volume Down              |
-|--         |Hold      |Enter Menu               |
-|Red Cross  |Press Once|Volume Up                |
+|Dot        |Press Once|Volume Up                |
+|--         |Hold      |Volume Down              |
+|Red Cross  |Press Once|Hang Up                  |
 |--         |Hold      |Hang Up                  |
 
 ### Menu Operation
