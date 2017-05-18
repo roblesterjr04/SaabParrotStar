@@ -1,7 +1,7 @@
 //#########################################################
 //###                                                   ###
 //###            Saab ParrotStar BT Control             ###
-//###                   Version 1.1                     ###
+//###                   Version 1.2                     ###
 //###                    Rob Lester                     ###
 //###               Hardware: Atmega328p                ###
 //###                                                   ###
@@ -243,11 +243,12 @@ void executeButton(int button, int press) {
 				else callButton();
 				break;
 			case 2:
-				if (menu || inCall) down();
+				if (menu) down();
+				else if (inCall) up();
 				else menuSelect();
 				break;
 			case 3:
-				if (menu || inCall) up();
+				if (menu) up();
 				else endButton();
 				break;
 			default:
