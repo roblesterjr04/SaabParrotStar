@@ -264,7 +264,7 @@ void longPressButton(int button) {
 			break;
 		case 2:
 			if (!menu && !inCall) auxEnable1();
-			if (inCall) menuSelect();
+			if (inCall) down();
 			break;
 		case 3:
 			if (menu || inCall) endButton();
