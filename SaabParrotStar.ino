@@ -1,7 +1,7 @@
 //#########################################################
 //###                                                   ###
 //###            Saab ParrotStar BT Control             ###
-//###                   Version 1.2                     ###
+//###                  Version 1.2.1                    ###
 //###                    Rob Lester                     ###
 //###               Hardware: Atmega328p                ###
 //###                                                   ###
@@ -133,7 +133,8 @@ void serialEvent() { // Receive commands from the brain box
 		menu = 1;
 	}
 	if (v == 119) {
-		// Possibly incoming call?
+		int ledState = digitalRead(greenPin);
+		digitalWrite(!ledState);
 	}
 	
 	// End specific commands
