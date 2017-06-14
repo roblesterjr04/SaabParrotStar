@@ -1,7 +1,7 @@
 //#########################################################
 //###                                                   ###
 //###            Saab ParrotStar BT Control             ###
-//###                  Version 1.2.1                    ###
+//###                  Version 1.2.2                    ###
 //###                    Rob Lester                     ###
 //###               Hardware: Atmega328p                ###
 //###                                                   ###
@@ -134,7 +134,7 @@ void serialEvent() { // Receive commands from the brain box
 	}
 	if (v == 119) {
 		int ledState = digitalRead(greenPin);
-		digitalWrite(!ledState);
+		digitalWrite(greenPin, !ledState);
 	}
 	
 	// End specific commands
@@ -226,35 +226,43 @@ void executeButton(int button, int press) {
 	if (press == 1) {
 		longPressButton(button);
 	} else if (press == 2) {
-		switch (button) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				reset();
-				break;
-			default:
-				break;
-		}
+		longHoldButton(button);
 	} else {
-		switch (button) {
-			case 1:
-				if (menu) menuSelect();
-				else callButton();
-				break;
-			case 2:
-				if (menu) down();
-				else if (inCall) up();
-				else menuSelect();
-				break;
-			case 3:
-				if (menu) up();
-				else endButton();
-				break;
-			default:
-				break;
-		}
+		shortPressButton(button);
+	}
+}
+
+void shortPressButton(int button) {
+	switch (button) {
+		case 1:
+			if (menu) menuSelect();
+			else callButton();
+			break;
+		case 2:
+			if (menu) down();
+			else if (inCall) up();
+			else menuSelect();
+			break;
+		case 3:
+			if (menu) up();
+			else endButton();
+			break;
+		default:
+			break;
+	}
+}
+
+void longHoldButton(int button) {
+	switch (button) {
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			reset();
+			break;
+		default:
+			break;
 	}
 }
 
@@ -279,13 +287,13 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
-	blinkLed(greenPin, 3);
+	blinkLed(greenPin, 1);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
-	blinkLed(greenPin, 3);
+	blinkLed(greenPin, 1);
 }
 
 // Blink an LED. Do not use inside the main loop, or the serial interrupts.
@@ -301,60 +309,51 @@ void blinkLed(int led, int times) {
 }
 
 // Box specific functions
-void command() {
+void command(int command) {
 	box.write(160);
 	box.write(130);
+	box.write(command);
 }
 
 void releaseButton() {
 	delay(150);
-	command();
-	box.write(0);
+	command(0);
 }
 
 void callButton() {
-	command();
-	box.write(2);
+	command(2);
 	releaseButton();
 }
 
 void redial() {
-	command();
-	box.write(2);
+	command(2);
 }
 
 void endButton() {
-	blinkLed(redPin, 2);
-	command();
-	box.write(1);
+	command(1);
 	releaseButton();
 }
 
 void menuSelect() {
-	command();
-	box.write(4);
+	command(4);
 	releaseButton();
 }
 
 void up() {
-	command();
-	box.write(8);
+	command(8);
 }
 
 void down() {
-	command();
-	box.write(248);
+	command(248);
 }
 
 void reset() {
 	debugPrint("Resetting Device. Goodbye.");
-	digitalWrite(greenPin, LOW);
-	digitalWrite(redPin, HIGH);
+	digitalWrite(greenPin, HIGH);
 	resetConfirm = 0;
-	command();
-	box.write(3);
+	command(3);
 	delay(2000);
-	digitalWrite(redPin, LOW);
+	digitalWrite(greenPin, LOW);
 	EEPROM.update(auxPinMem1, LOW);
 	EEPROM.update(auxPinMem2, LOW);
 	resetFunc();
