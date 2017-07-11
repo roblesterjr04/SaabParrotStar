@@ -90,6 +90,7 @@ void loop() { //
 		delay(250);
 		int bl = digitalRead(greenPin);
 		digitalWrite(greenPin, !bl);
+    //digitalWrite(ledPin, !bl);
 	}
 }
 
