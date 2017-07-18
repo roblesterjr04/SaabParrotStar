@@ -126,16 +126,20 @@ void serialEvent() { // Receive commands from the brain box
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 		inCall = 1;
+		menu = 0;
 	}
 	if (v == 2 || v == 32) {
 		// Menu State
 		digitalWrite(greenPin, HIGH);
 		digitalWrite(redPin, LOW);
 		menu = 1;
+		inCall = 0;
 	}
 	if (v == 119) {
 		int ledState = digitalRead(greenPin);
 		digitalWrite(greenPin, !ledState);
+		menu = 0;
+		inCall = 0;
 	}
 	
 	// End specific commands
