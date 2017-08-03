@@ -58,6 +58,7 @@ int auxPinMem2 = 1; // Aux 2 setting byte on EEPROM
 int menu = 0;
 int resetConfirm = 0;
 int inCall = 0;
+int ringing = 0;
 
 // Debug data
 int debug = false;
@@ -110,7 +111,7 @@ void serialEvent() { // Receive commands from the brain box
 		digitalWrite(ledPin, LOW);
 	}
 
-  int v = box.read();
+	int v = box.read();
 	
 	// Process specific commands from box
 	
@@ -120,6 +121,7 @@ void serialEvent() { // Receive commands from the brain box
 		digitalWrite(redPin, LOW);
 		inCall = 0;
 		menu = 0;
+		ringing = 0;
 	}
 	if (v == 17) { 
 		// Phone is engaged
@@ -127,6 +129,7 @@ void serialEvent() { // Receive commands from the brain box
 		digitalWrite(redPin, LOW);
 		inCall = 1;
 		menu = 0;
+		ringing = 0;
 	}
 	if (v == 2 || v == 32) {
 		// Menu State
@@ -134,12 +137,14 @@ void serialEvent() { // Receive commands from the brain box
 		digitalWrite(redPin, LOW);
 		menu = 1;
 		inCall = 0;
+		ringing = 0;
 	}
 	if (v == 119) {
 		int ledState = digitalRead(greenPin);
 		digitalWrite(greenPin, !ledState);
 		menu = 0;
 		inCall = 0;
+		ringing = 1;
 	}
 	
 	// End specific commands
@@ -326,6 +331,7 @@ void releaseButton() {
 }
 
 void callButton() {
+	digitalWrite(greenPin, HIGH);
 	command(2);
 	releaseButton();
 }
