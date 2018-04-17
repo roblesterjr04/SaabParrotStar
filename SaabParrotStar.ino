@@ -1,7 +1,7 @@
 //#########################################################
 //###                                                   ###
 //###            Saab ParrotStar BT Control             ###
-//###                  Version 1.2.3                    ###
+//###                  Version 1.2.4                    ###
 //###                    Rob Lester                     ###
 //###               Hardware: Atmega328p                ###
 //###                                                   ###
@@ -170,6 +170,8 @@ void serialEvent() { // Receive commands from the brain box
 		box.write(131);
 		conRes = 131;
 	}
+
+  readAnalogController();
 	
 	lastComm = v; // Set our last command
 }
@@ -246,6 +248,7 @@ void shortPressButton(int button) {
 	switch (button) {
 		case 1:
 			if (menu) menuSelect();
+			//else if (ringing) redial();
 			else callButton();
 			break;
 		case 2:
@@ -297,13 +300,13 @@ void longPressButton(int button) {
 void auxEnable1() {
 	digitalWrite(auxPin1, !digitalRead(auxPin1));
 	EEPROM.write(auxPinMem1, digitalRead(auxPin1));
-	blinkLed(greenPin, 1);
+	blinkLed(greenPin, 3);
 }
 
 void auxEnable2() {
 	digitalWrite(auxPin2, !digitalRead(auxPin2));
 	EEPROM.write(auxPinMem2, digitalRead(auxPin2));
-	blinkLed(greenPin, 1);
+	blinkLed(greenPin, 3);
 }
 
 // Blink an LED. Do not use inside the main loop, or the serial interrupts.
@@ -331,7 +334,7 @@ void releaseButton() {
 }
 
 void callButton() {
-	digitalWrite(greenPin, HIGH);
+	blinkLed(greenPin, 2);
 	command(2);
 	releaseButton();
 }
